@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindFresh AI - Motivation</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+
+      *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#173F4A;
+    min-height:100vh;
+    color:#fff;
+}
+
+.header{
+    width:100%;
+    padding:18px 20px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(15px);
+    display:flex;
+    align-items:center;
+    gap:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.3);
+}
+
+.header h2{
+    color:#00D9FF;
+    font-size:28px;
+}
+
+.back-btn{
+    color:#fff;
+    font-size:22px;
+    text-decoration:none;
+}
+
+.container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px 20px;
+}
+
+.glass-card{
+    width:100%;
+    max-width:650px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:30px;
+    padding:35px 25px;
+    text-align:center;
+    backdrop-filter:blur(18px);
+    box-shadow:0 10px 30px rgba(0,255,255,.15);
+}
+
+.icon{
+    font-size:60px;
+    color:#00D9FF;
+    margin-bottom:15px;
+}
+
+.glass-card h1{
+    font-size:34px;
+    margin-bottom:20px;
+}
+
+#quote{
+    font-size:22px;
+    line-height:1.7;
+    color:#EAFBFF;
+    min-height:120px;
+}
+
+.buttons{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:30px;
+    flex-wrap:wrap;
+}
+
+button{
+    border:none;
+    outline:none;
+    background:#00D9FF;
+    color:#08313B;
+    padding:14px 22px;
+    border-radius:30px;
+    font-size:17px;
+    cursor:pointer;
+    transition:.3s;
+    font-weight:bold;
+}
+
+button:hover{
+    transform:translateY(-4px);
+    box-shadow:0 0 20px #00D9FF;
+}
+
+.next-btn{
+    min-width:180px;
+}
+
+@media(max-width:768px){
+
+.header h2{
+    font-size:22px;
+}
+
+.glass-card{
+    padding:25px 18px;
+}
+
+.glass-card h1{
+    font-size:28px;
+}
+
+#quote{
+    font-size:18px;
+  transition:0.4s;
+opacity:1;
+}
+
+button{
+    width:100%;
+}
+}
+
+
+    </style>
+
+</head>
+
+<body>
+
+    <header class="header">
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <h2>
+        <i class="fas fa-lightbulb"></i>
+        Motivation
+    </h2>
+</header>
+
+<div class="container">
+
+    <div class="glass-card">
+
+        <div class="icon">
+            <i class="fas fa-lightbulb"></i>
+        </div>
+
+        <h1>Daily Motivation</h1>
+
+        <p id="quote">
+            Believe in yourself. Every new day is another chance to grow.
+        </p>
+
+        <div class="buttons">
+
+            <button onclick="prevQuote()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+
+            <button onclick="nextQuote()" class="next-btn">
+                Next Quote
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <button onclick="copyQuote()">
+                <i class="fas fa-copy"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+    <script>
+
+        const quotes = [
+"Believe in yourself. Every new day is another chance to grow.",
+"Success starts with self-confidence.",
+"Never give up. Great things take time.",
+"Stay positive, work hard and make it happen.",
+"Small steps every day lead to big success.",
+"Your future is created by what you do today.",
+"Every challenge makes you stronger.",
+"Dream big and dare to fail.",
+"Don't stop until you're proud.",
+"Be stronger than your excuses.",
+"The best view comes after the hardest climb.",
+"Discipline is the key to success.",
+"Every day is a fresh beginning.",
+"You are capable of amazing things.",
+"Stay patient. Your time will come.",
+"Progress is progress, no matter how small.",
+"Push yourself because no one else will.",
+"Believe. Achieve. Repeat.",
+"Keep moving forward.",
+"Your only limit is your mind."
+];
+
+let index = 0;
+
+const quote = document.getElementById("quote");
+
+function showQuote(){
+    quote.style.opacity = "0";
+
+    setTimeout(() => {
+        quote.innerText = quotes[index];
+        quote.style.opacity = "1";
+    },300);
+}
+
+function nextQuote(){
+    index++;
+    if(index >= quotes.length){
+        index = 0;
+    }
+    showQuote();
+}
+
+function prevQuote(){
+    index--;
+    if(index < 0){
+        index = quotes.length - 1;
+    }
+    showQuote();
+}
+
+function copyQuote(){
+    navigator.clipboard.writeText(quotes[index]);
+    alert("Quote Copied Successfully!");
+}
+
+// Auto Change Every 5 Seconds
+setInterval(nextQuote,5000);
+
+
+    </script>
+
+</body>
+
+</html>

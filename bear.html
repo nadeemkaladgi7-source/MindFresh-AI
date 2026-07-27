@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Bear Bop</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #2b1055, #0d0914);
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        /* Ambient Background Glow */
+        .ambient-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(111, 66, 193, 0.15) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Hammer Cursor */
+        .hammer-cursor {
+            position: fixed;
+            font-size: 3rem;
+            pointer-events: none;
+            z-index: 1000;
+            transform-origin: bottom right;
+            transition: transform 0.05s ease-out;
+            display: none; /* Hidden on touch devices */
+        }
+
+        @media (pointer: fine) {
+            .hammer-cursor { display: block; }
+            body { cursor: none; }
+        }
+
+        .hammer-hit {
+            transform: rotate(-45deg) scale(0.9) !important;
+        }
+
+        /* Header & Glassmorphism Stats */
+        .header {
+            text-align: center;
+            margin: 20px 0 15px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            letter-spacing: 3px;
+        }
+
+        .header p {
+            color: #a7a8b5;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 15px 25px;
+            display: flex;
+            gap: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #8b8ea5;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #score-val { color: #00f2fe; }
+        #lives-val { color: #ff0844; }
+        #coins-val { color: #f5d300; }
+        #combo-val { color: #b721ff; font-size: 1.2rem; }
+
+        /* Shop Area */
+        .shop-area {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            z-index: 10;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255,255,255,0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-glow {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+            padding: 14px 40px;
+            box-shadow: 0 0 20px rgba(118, 75, 162, 0.6);
+        }
+        
+        .btn-glow:hover {
+            box-shadow: 0 0 30px rgba(118, 75, 162, 0.9);
+            transform: scale(1.05);
+        }
+
+        /* 3D Game Board */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        .hole {
+            width: 100px;
+            height: 100px;
+            background: #090611;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 15px 25px rgba(0,0,0,1),
+                inset 0 -3px 5px rgba(255,255,255,0.1),
+                0 2px 10px rgba(118,75,162,0.3);
+            border-bottom: 4px solid #1a102e;
+        }
+
+        .bear {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            font-size: 4.5rem;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+        }
+
+        .bear.up {
+            transform: translateX(-50%) translateY(0%);
+        }
+
+        .bear.hit {
+            transform: translateX(-50%) translateY(20%) scale(0.8) rotate(20deg);
+            filter: grayscale(100%) brightness(40%);
+        }
+
+        /* Floating Text & Particles */
+        .floating-text {
+            position: absolute;
+            color: #00f2fe;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 1.5rem;
+            pointer-events: none;
+            text-shadow: 0 0 10px #00f2fe;
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 50;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-box {
+            background: linear-gradient(145deg, #1e1433, #120a21);
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #ff0844;
+            text-shadow: 0 0 20px rgba(255, 8, 68, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+            40%, 60% { transform: translate3d(8px, 0, 0); }
+        }
+
+        @media (max-width: 500px) {
+            .hole { width: 80px; height: 80px; }
+            .bear { font-size: 3.5rem; }
+            .glass-panel { padding: 10px 15px; gap: 15px; }
+            .header h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow"></div>
+    <div class="hammer-cursor" id="cursor">🔨</div>
+
+    <div class="header">
+        <h1>NEON BOP</h1>
+        <p>Advanced Stress Relief Module</p>
+    </div>
+
+    <div class="glass-panel">
+        <div class="stat-box">
+            <span class="stat-label">Score</span>
+            <span class="stat-value" id="score-val">0</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Combo</span>
+            <span class="stat-value" id="combo-val">x1</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Lives</span>
+            <span class="stat-value" id="lives-val">3</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Coins</span>
+            <span class="stat-value" id="coins-val">0</span>
+        </div>
+    </div>
+
+    <div class="shop-area">
+        <button class="btn" id="btn-life" onclick="buyLife()">❤️ +1 Life (50 🪙)</button>
+        <button class="btn" id="btn-frenzy" onclick="buyFrenzy()">⚡ Frenzy (100 🪙)</button>
+    </div>
+
+    <div id="start-screen" style="margin-bottom: 20px;">
+        <button class="btn btn-glow" onclick="startGame()">INITIATE SEQUENCE</button>
+    </div>
+
+    <div class="board" id="board">
+        <!-- JS generated holes -->
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h2>SYSTEM OFFLINE</h2>
+            <p style="color: #a7a8b5; font-size: 1.2rem; margin-bottom: 10px;">Final Score: <strong id="final-score" style="color:#00f2fe;">0</strong></p>
+            <p style="color: #a7a8b5; font-size: 1.2rem; margin-bottom: 30px;">Highest Combo: <strong id="final-combo" style="color:#b721ff;">x1</strong></p>
+            <button class="btn btn-glow" onclick="resetGame()">REBOOT</button>
+        </div>
+    </div>
+
+    <script>
+        // Game Logic & State
+        let score = 0, lives = 3, coins = parseInt(localStorage.getItem('premium_coins')) || 0;
+        let combo = 1, maxCombo = 1, lastHitTime = 0;
+        let isPlaying = false, isFrenzy = false;
+        let bears = [], lastHole = -1;
+        let popTimer, hideTimer;
+        let baseSpeed = 1000, currentSpeed = baseSpeed;
+        
+        // DOM Elements
+        const board = document.getElementById('board');
+        const scoreEl = document.getElementById('score-val');
+        const comboEl = document.getElementById('combo-val');
+        const livesEl = document.getElementById('lives-val');
+        const coinsEl = document.getElementById('coins-val');
+        const cursor = document.getElementById('cursor');
+
+        // Initialize UI
+        coinsEl.innerText = coins;
+        updateShop();
+
+        // Custom Cursor Logic
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 40 + 'px';
+        });
+
+        document.addEventListener('mousedown', () => cursor.classList.add('hammer-hit'));
+        document.addEventListener('mouseup', () => cursor.classList.remove('hammer-hit'));
+
+        // Audio Synthesizer (No external files)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playTone(freq, type, duration, vol) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function soundHit() { playTone(300, 'sine', 0.1, 0.5); playTone(600, 'triangle', 0.1, 0.3); }
+        function soundMiss() { playTone(150, 'sawtooth', 0.3, 0.3); }
+        function soundPowerup() { playTone(800, 'square', 0.2, 0.2); setTimeout(()=>playTone(1200, 'square', 0.3, 0.2), 100); }
+
+        // Particle System
+        function createParticles(x, y) {
+            const colors = ['#00f2fe', '#4facfe', '#b721ff', '#ffffff'];
+            for(let i=0; i<8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.width = Math.random() * 8 + 4 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                document.body.appendChild(particle);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 60 + 30;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity - 50;
+
+                particle.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+                ], { duration: 600, easing: 'cubic-bezier(0, .9, .57, 1)' }).onfinish = () => particle.remove();
+            }
+        }
+
+        function showFloatingText(x, y, val) {
+            const el = document.createElement('div');
+            el.className = 'floating-text';
+            el.innerText = `+${val}`;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
+        // Build Grid
+        for(let i=0; i<9; i++) {
+            const hole = document.createElement('div');
+            hole.className = 'hole';
+            const bear = document.createElement('div');
+            bear.className = 'bear';
+            bear.innerText = ['🐻','🐼','🐨'][Math.floor(Math.random()*3)]; // Different bears
+            
+            const hitAction = (e) => {
+                e.preventDefault();
+                if(!isPlaying || bear.dataset.hitable !== "true") return;
+                
+                bear.dataset.hitable = "false";
+                bear.classList.add('hit');
+                soundHit();
+                
+                const rect = hole.getBoundingClientRect();
+                createParticles(rect.left + rect.width/2, rect.top + rect.height/2);
+                
+                // Combo Logic
+                const now = Date.now();
+                if(now - lastHitTime < 1200) { combo++; } else { combo = 1; }
+                lastHitTime = now;
+                if(combo > maxCombo) maxCombo = combo;
+                comboEl.innerText = `x${combo}`;
+                
+                const points = 10 * combo;
+                score += points;
+                scoreEl.innerText = score;
+                showFloatingText(rect.left + 20, rect.top, points);
+                
+                if(Math.random() > 0.7) { coins += isFrenzy ? 3 : 1; coinsEl.innerText = coins; }
+                
+                clearTimeout(hideTimer);
+                if(currentSpeed > 400) currentSpeed -= 15; // Speed up
+                
+                setTimeout(() => { bear.classList.remove('up'); if(isPlaying) popTimer = setTimeout(popBear, 200); }, 200);
+            };
+
+            bear.addEventListener('mousedown', hitAction);
+            bear.addEventListener('touchstart', hitAction, {passive: false});
+            hole.appendChild(bear);
+            board.appendChild(hole);
+            bears.push(bear);
+        }
+
+        // Shop UI
+        function updateShop() {
+            document.getElementById('btn-life').disabled = coins < 50 || lives >= 5 || isPlaying;
+            document.getElementById('btn-frenzy').disabled = coins < 100 || isPlaying;
+            localStorage.setItem('premium_coins', coins);
+        }
+
+        function buyLife() { if(coins>=50 && lives<5){ coins-=50; lives++; soundPowerup(); updateShop(); livesEl.innerText=lives; coinsEl.innerText=coins; } }
+        function buyFrenzy() { if(coins>=100){ coins-=100; isFrenzy=true; soundPowerup(); updateShop(); coinsEl.innerText=coins; alert("FRENZY MODE: +3 Coins per drop next game!"); } }
+
+        function startGame() {
+            score = 0; lives = 3; combo = 1; maxCombo = 1;
+            currentSpeed = isFrenzy ? baseSpeed * 0.8 : baseSpeed;
+            isPlaying = true;
+            
+            scoreEl.innerText = score; livesEl.innerText = lives; comboEl.innerText = 'x1';
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('modal').classList.remove('active');
+            updateShop();
+            
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            popBear();
+        }
+
+        function popBear() {
+            if(!isPlaying) return;
+            let idx; do { idx = Math.floor(Math.random()*9); } while(idx === lastHole);
+            lastHole = idx;
+            
+            const bear = bears[idx];
+            bear.classList.remove('hit');
+            bear.classList.add('up');
+            bear.dataset.hitable = "true";
+
+            hideTimer = setTimeout(() => {
+                if(bear.classList.contains('up') && bear.dataset.hitable === "true") {
+                    bear.classList.remove('up');
+                    combo = 1; comboEl.innerText = 'x1';
+                    loseLife();
+                }
+            }, currentSpeed);
+        }
+
+        function loseLife() {
+            lives--; livesEl.innerText = lives;
+            soundMiss();
+            document.body.classList.add('shake');
+            setTimeout(()=>document.body.classList.remove('shake'), 400);
+
+            if(lives <= 0) gameOver();
+            else if(isPlaying) popTimer = setTimeout(popBear, 500);
+        }
+
+        function gameOver() {
+            isPlaying = false; isFrenzy = false;
+            clearTimeout(popTimer); clearTimeout(hideTimer);
+            bears.forEach(b => b.classList.remove('up'));
+            
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-combo').innerText = `x${maxCombo}`;
+            
+            setTimeout(() => document.getElementById('modal').classList.add('active'), 500);
+            updateShop();
+        }
+
+        function resetGame() {
+            document.getElementById('modal').classList.remove('active');
+            document.getElementById('start-screen').style.display = 'block';
+            updateShop();
+        }
+    </script>
+</body>
+</html>

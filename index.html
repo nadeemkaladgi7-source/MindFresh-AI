@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindFresh AI - Relax & Refresh</title>
+    <!-- CSS File -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <i class="fa-solid fa-robot"></i> MindFresh AI
+        </div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#mood">Mood</a></li>
+            <li><a href="#games">Games</a></li>
+            <li><a href="#music">Music</a></li>
+            <li><a href="#journal">Journal</a></li>
+        </ul>
+        <div class="menu-btn"><i class="fa-solid fa-bars"></i></div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="loading-text">Loading your peaceful experience...</div>
+        <h1>Refresh Your Mind <br>with MindFresh AI</h1>
+        <p>Relax your mind, reduce stress, improve your mood, enjoy calming music, breathing exercises and fun mini games — all in one place.</p>
+        
+        <div class="get-started">
+            <input type="text" id="userName" placeholder="Enter Your Name">
+            <button class="btn-start" onclick="startExperience()">Get Started <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </section>
+
+    
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="about-content">
+            <h2>Why MindFresh AI?</h2>
+            <p>A digital space designed to help you manage stress, improve focus, and maintain a healthy balance between your daily tasks and mental well-being.</p>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <h3>MindFresh AI</h3>
+            <p>Empowering you with a peaceful mind.</p>
+            <div class="footer-links">
+                <a href="#">Home</a>
+                <a href="#features-section">Features</a>
+                <a href="#about">About</a>
+            </div>
+            <p class="copyright">&copy; 2026 MindFresh AI Project Team. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+       function startExperience() {
+    let name = document.getElementById('userName').value;
+
+    if (name.trim() === "") {
+        alert("Please enter your name to begin your journey.");
+    } else {
+        localStorage.setItem("userName", name);
+        window.location.href = "dashboard.html";
+    }
+}
+    </script>
+
+</body>
+</html>

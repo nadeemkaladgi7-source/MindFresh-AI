@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindFresh AI Dashboard</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+min-height:100vh;
+padding:20px;
+color:#fff;
+}
+
+header{
+text-align:center;
+margin-bottom:40px;
+}
+
+header h1{
+font-size:42px;
+color:#00eaff;
+margin-bottom:10px;
+}
+
+header p{
+font-size:18px;
+color:#ddd;
+}
+
+#username{
+color:#00ffd5;
+font-weight:bold;
+}
+
+.dashboard{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.card{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(15px);
+border-radius:20px;
+padding:25px;
+text-align:center;
+text-decoration:none;
+color:white;
+transition:.4s;
+box-shadow:0 0 20px rgba(0,0,0,.3);
+}
+
+.card:hover{
+transform:translateY(-10px);
+box-shadow:0 0 25px #00eaff;
+}
+
+.card i{
+font-size:45px;
+margin-bottom:15px;
+color:#00eaff;
+}
+
+.card h2{
+margin-bottom:10px;
+font-size:22px;
+}
+
+.card p{
+color:#ddd;
+font-size:15px;
+}
+
+footer{
+text-align:center;
+margin-top:40px;
+color:#aaa;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1> MindFresh AI</h1>
+
+<p>Welcome,
+<span id="username"></span>
+</p>
+
+</header>
+
+<div class="dashboard">
+
+<a href="mood.html" class="card">
+<i class="fa-solid fa-face-smile"></i>
+<h2>Mood Detection</h2>
+<p>Detect your mood instantly.</p>
+</a>
+
+   <a href="chatbot.html" class="card">
+    <i class="fa-solid fa-robot"></i>
+    <h2>AI Chat</h2>
+    <p>Talk with your AI assistant.</p>
+</a>
+  
+<a href="nature.html" class="card">
+<i class="fa-solid fa-leaf"></i>
+<h2>Nature Sounds</h2>
+<p>Relax with peaceful sounds.</p>
+</a>
+
+<a href="game.html" class="card">
+<i class="fa-solid fa-gamepad"></i>
+<h2>Mini Games</h2>
+<p>Refresh your brain.</p>
+</a>
+  <a href="breathing.html" class="card">
+<i class="fa-solid fa-lungs"></i>
+<h2>Breathing</h2>
+<p>Relax with breathing exercises.</p>
+</a>
+
+<a href="journal.html" class="card">
+<i class="fa-solid fa-book"></i>
+<h2>Journal</h2>
+<p>Write your daily thoughts.</p>
+</a>
+
+<a href="quotes.html" class="card">
+<i class="fa-solid fa-lightbulb"></i>
+<h2>Motivation</h2>
+<p>Read inspiring quotes.</p>
+</a>
+
+<a href="moodtracker.html" class="card">
+<i class="fa-solid fa-chart-line"></i>
+<h2>Mood Tracker</h2>
+<p>Track your daily mood.</p>
+</a>
+
+
+<a href="settings.html" class="card">
+<i class="fa-solid fa-gear"></i>
+<h2>Settings</h2>
+<p>Customize your experience.</p>
+</a>
+
+</div>
+
+<footer>
+<p>© 2026 MindFresh AI | Designed by Nadeem</p>
+</footer>
+
+<script>
+
+let name = localStorage.getItem("userName");
+
+if(name){
+document.getElementById("username").innerHTML = name + " 👋";
+}else{
+document.getElementById("username").innerHTML = "Guest 👋";
+}
+
+</script>
+
+</body>
+</html>

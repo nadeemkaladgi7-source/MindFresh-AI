@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe - Unbeatable AI</title>
+  <style>
+    :root {
+      --bg-color: #0b111e;
+      --card-bg: #131d31;
+      --cell-bg: #1a263d;
+      --cell-hover: #243350;
+      --x-color: #00d2ff;
+      --x-glow: rgba(0, 210, 255, 0.6);
+      --o-color: #ff2a5f;
+      --o-glow: rgba(255, 42, 95, 0.6);
+      --text-main: #ffffff;
+      --text-muted: #8e9bb0;
+      --accent-grad: linear-gradient(135deg, #6366f1, #a855f7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(180deg, #ffffff, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    .status {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      background: var(--card-bg);
+      padding: 18px;
+      border-radius: 24px;
+      width: 100%;
+      aspect-ratio: 1;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6),
+                  inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .cell {
+      background-color: var(--cell-bg);
+      border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3.2rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      position: relative;
+    }
+
+    .cell:hover {
+      background-color: var(--cell-hover);
+      transform: translateY(-2px);
+    }
+
+    .cell:active {
+      transform: translateY(0);
+    }
+
+    /* Glow & Animation Effects for X and O */
+    .cell.x {
+      color: var(--x-color);
+      text-shadow: 0 0 12px var(--x-glow), 0 0 24px var(--x-glow);
+      animation: popIn 0.25s ease-out forwards;
+    }
+
+    .cell.o {
+      color: var(--o-color);
+      text-shadow: 0 0 12px var(--o-glow), 0 0 24px var(--o-glow);
+      animation: popIn 0.25s ease-out forwards;
+    }
+
+    /* Winning Highlight */
+    .cell.winner {
+      background-color: #2e3e5c;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(0.6);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      100% {
+        transform: scale(1.04);
+      }
+    }
+
+    .restart-btn {
+      margin-top: 28px;
+      padding: 14px 36px;
+      font-size: 1rem;
+      font-weight: 600;
+      background: var(--accent-grad);
+      color: #ffffff;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(168, 85, 247, 0.35);
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .restart-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(168, 85, 247, 0.55);
+    }
+
+    .restart-btn:active {
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 class="title">Tic Tac Toe</h1>
+    <p class="subtitle">You vs Unbeatable AI</p>
+    
+    <div class="status" id="status">Your Turn (X)</div>
+
+    <div class="board" id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+
+    <button class="restart-btn" id="restartBtn">Restart Game</button>
+  </div>
+
+  <script>
+    const cells = document.querySelectorAll('.cell');
+    const statusText = document.querySelector('#status');
+    const restartBtn = document.querySelector('#restartBtn');
+
+    let board = ["", "", "", "", "", "", "", "", ""];
+    const HUMAN = "X";
+    const AI = "O";
+    let isGameActive = true;
+
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6]             // Diagonals
+    ];
+
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+    restartBtn.addEventListener('click', restartGame);
+
+    function handleCellClick(e) {
+      const index = e.target.getAttribute('data-index');
+
+      if (board[index] !== "" || !isGameActive) return;
+
+      makeMove(index, HUMAN);
+
+      if (isGameActive) {
+        statusText.innerText = "AI is thinking...";
+        setTimeout(() => {
+          let bestMove = getBestMove();
+          makeMove(bestMove, AI);
+          if (isGameActive) {
+            statusText.innerText = "Your Turn (X)";
+          }
+        }, 350);
+      }
+    }
+
+    function makeMove(index, player) {
+      board[index] = player;
+      const cell = cells[index];
+      cell.innerText = player;
+      cell.classList.add(player.toLowerCase());
+
+      const winPattern = checkWin(board, player);
+
+      if (winPattern) {
+        statusText.innerText = player === HUMAN ? "You Won! 🎉" : "AI Won! 🤖";
+        highlightWin(winPattern);
+        isGameActive = false;
+      } else if (board.every(cell => cell !== "")) {
+        statusText.innerText = "It's a Draw! 🤝";
+        isGameActive = false;
+      }
+    }
+
+    function checkWin(currentBoard, player) {
+      for (let pattern of winPatterns) {
+        if (pattern.every(index => currentBoard[index] === player)) {
+          return pattern;
+        }
+      }
+      return null;
+    }
+
+    function highlightWin(pattern) {
+      pattern.forEach(index => {
+        cells[index].classList.add('winner');
+      });
+    }
+
+    // --- Minimax Algorithm (Unbeatable AI) ---
+    function getBestMove() {
+      let bestScore = -Infinity;
+      let move;
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+          board[i] = AI;
+          let score = minimax(board, 0, false);
+          board[i] = "";
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+      return move;
+    }
+
+    function minimax(tempBoard, depth, isMaximizing) {
+      if (checkWin(tempBoard, AI)) return 10 - depth;
+      if (checkWin(tempBoard, HUMAN)) return depth - 10;
+      if (tempBoard.every(cell => cell !== "")) return 0;
+
+      if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (tempBoard[i] === "") {
+            tempBoard[i] = AI;
+            let score = minimax(tempBoard, depth + 1, false);
+            tempBoard[i] = "";
+            bestScore = Math.max(score, bestScore);
+          }
+        }
+        return bestScore;
+      } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (tempBoard[i] === "") {
+            tempBoard[i] = HUMAN;
+            let score = minimax(tempBoard, depth + 1, true);
+            tempBoard[i] = "";
+            bestScore = Math.min(score, bestScore);
+          }
+        }
+        return bestScore;
+      }
+    }
+
+    function restartGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      isGameActive = true;
+      statusText.innerText = "Your Turn (X)";
+      cells.forEach(cell => {
+        cell.innerText = "";
+        cell.className = "cell";
+      });
+    }
+  </script>
+
+</body>
+</html>

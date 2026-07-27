@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MindFresh AI - Mood Tracker</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#081b29,#0f3b52,#0d5b7d);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+color:#fff;
+}
+
+.container{
+width:100%;
+max-width:430px;
+}
+
+.card{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.15);
+border-radius:25px;
+padding:22px;
+box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+.back-btn{
+color:#00e5ff;
+text-decoration:none;
+font-size:18px;
+display:inline-flex;
+align-items:center;
+gap:8px;
+margin-bottom:20px;
+}
+
+.logo{
+width:90px;
+height:90px;
+margin:auto;
+border-radius:50%;
+background:rgba(0,229,255,.15);
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:42px;
+color:#00e5ff;
+margin-bottom:15px;
+animation:float 2s infinite alternate;
+}
+
+@keyframes float{
+from{transform:translateY(0);}
+to{transform:translateY(-8px);}
+}
+
+h1{
+text-align:center;
+font-size:32px;
+margin-bottom:8px;
+}
+
+.subtitle{
+text-align:center;
+color:#d9d9d9;
+margin-bottom:20px;
+}
+
+.dateBox{
+background:rgba(255,255,255,.08);
+padding:12px;
+border-radius:15px;
+text-align:center;
+margin-bottom:20px;
+font-size:15px;
+}
+
+.moodGrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-bottom:20px;
+}
+
+.mood{
+background:rgba(255,255,255,.08);
+border-radius:18px;
+padding:18px;
+text-align:center;
+cursor:pointer;
+transition:.3s;
+border:2px solid transparent;
+}
+
+.mood:hover{
+transform:scale(1.05);
+border-color:#00e5ff;
+}
+
+.mood.active{
+background:#00bcd4;
+}
+
+.mood span{
+font-size:34px;
+display:block;
+margin-bottom:8px;
+}
+
+.todayMood{
+background:rgba(255,255,255,.08);
+padding:16px;
+border-radius:18px;
+margin-top:15px;
+text-align:center;
+}
+
+.todayMood h3{
+margin-bottom:10px;
+}
+
+#selectedMood{
+font-size:24px;
+font-weight:bold;
+color:#00ffd5;
+}
+
+.aiBox{
+margin-top:18px;
+padding:15px;
+border-radius:15px;
+background:rgba(255,255,255,.08);
+line-height:1.6;
+}
+
+.aiBox h3{
+margin-bottom:10px;
+color:#00e5ff;
+}
+
+.quickActions{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-top:20px;
+}
+
+.action{
+background:rgba(255,255,255,.08);
+padding:15px;
+border-radius:15px;
+text-align:center;
+transition:.3s;
+}
+
+.action:hover{
+transform:scale(1.05);
+background:rgba(0,229,255,.18);
+}
+
+.action i{
+font-size:26px;
+margin-bottom:8px;
+color:#00e5ff;
+display:block;
+}
+  .action p{
+font-size:14px;
+color:#fff;
+}
+
+.streak{
+margin-top:20px;
+background:rgba(255,255,255,.08);
+padding:18px;
+border-radius:18px;
+text-align:center;
+}
+
+.streak h3{
+color:#00e5ff;
+margin-bottom:10px;
+}
+
+.streak span{
+font-size:30px;
+font-weight:bold;
+color:#00ffd5;
+}
+
+.history{
+margin-top:20px;
+background:rgba(255,255,255,.08);
+padding:18px;
+border-radius:18px;
+}
+
+.history h3{
+margin-bottom:12px;
+color:#00e5ff;
+}
+
+.historyList{
+display:flex;
+justify-content:space-between;
+font-size:28px;
+}
+
+.achievement{
+margin-top:20px;
+background:rgba(255,255,255,.08);
+padding:18px;
+border-radius:18px;
+}
+
+.achievement h3{
+margin-bottom:12px;
+color:#00e5ff;
+}
+
+.badge{
+display:inline-block;
+background:#00bcd4;
+padding:8px 14px;
+border-radius:20px;
+margin:5px;
+font-size:14px;
+}
+
+.saveBtn{
+width:100%;
+margin-top:22px;
+padding:16px;
+border:none;
+border-radius:16px;
+background:#00bcd4;
+color:white;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+.saveBtn:hover{
+transform:scale(1.03);
+background:#00d4ff;
+}
+
+.quote{
+margin-top:20px;
+text-align:center;
+font-style:italic;
+color:#d9d9d9;
+line-height:1.5;
+}
+
+@media(max-width:480px){
+
+.moodGrid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.card{
+padding:18px;
+}
+
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<a href="index.html" class="back-btn">
+<i class="fas fa-arrow-left"></i> Back
+</a>
+
+<div class="card">
+
+<div class="logo">
+😊
+</div>
+
+<h1>Mood Tracker</h1>
+
+<p class="subtitle">
+How are you feeling today?
+</p>
+
+<div class="dateBox" id="dateTime"></div>
+
+<div class="moodGrid">
+
+<div class="mood" onclick="selectMood(this,'😊 Happy')">
+<span>😊</span>
+Happy
+</div>
+
+<div class="mood" onclick="selectMood(this,'😌 Calm')">
+<span>😌</span>
+Calm
+</div>
+
+<div class="mood" onclick="selectMood(this,'😍 Excited')">
+<span>😍</span>
+Excited
+</div>
+
+<div class="mood" onclick="selectMood(this,'😎 Confident')">
+<span>😎</span>
+Confident
+</div>
+
+<div class="mood" onclick="selectMood(this,'😴 Tired')">
+<span>😴</span>
+Tired
+</div>
+
+<div class="mood" onclick="selectMood(this,'😔 Sad')">
+<span>😔</span>
+Sad
+</div>
+
+<div class="mood" onclick="selectMood(this,'😫 Stressed')">
+<span>😫</span>
+Stressed
+</div>
+
+<div class="mood" onclick="selectMood(this,'😡 Angry')">
+<span>😡</span>
+Angry
+</div>
+
+</div>
+
+<div class="todayMood">
+
+<h3>Today's Mood</h3>
+
+<div id="selectedMood">
+No Mood Selected
+</div>
+
+</div>
+
+<div class="aiBox">
+
+<h3>
+🤖 AI Suggestion
+</h3>
+
+<p id="aiText">
+Select your mood to get a helpful suggestion.
+</p>
+
+</div>
+
+<div class="quickActions">
+
+<div class="action">
+<i class="fas fa-music"></i>
+<p>Nature Sounds</p>
+</div>
+
+<div class="action">
+<i class="fas fa-book"></i>
+<p>Journal</p>
+</div>
+
+<div class="action">
+<i class="fas fa-gamepad"></i>
+<p>Mini Games</p>
+</div>
+
+<div class="action">
+<i class="fas fa-wind"></i>
+<p>Breathing</p>
+</div>
+
+</div>
+
+<div class="streak">
+
+<h3>🔥 Mood Streak</h3>
+
+<span id="streak">
+1 Day
+</span>
+
+</div>
+
+<div class="history">
+
+<h3>📈 Recent Moods</h3>
+
+<div class="historyList" id="historyList">
+
+😊 😌 😍 😔 😫
+
+</div>
+
+</div>
+
+<div class="achievement">
+
+<h3>🏆 Achievements</h3>
+
+<span class="badge">⭐ First Entry</span>
+
+<span class="badge">🔥 7 Day Streak</span>
+
+<span class="badge">💯 30 Entries</span>
+
+</div>
+
+<div class="quote">
+
+💙 Every small step towards positivity matters.
+
+</div>
+
+<button class="saveBtn"
+onclick="saveMood()">
+
+💾 Save Mood
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+  let currentMood = "";
+
+// Live Date & Time
+function updateDateTime() {
+    const now = new Date();
+    document.getElementById("dateTime").innerHTML =
+        now.toLocaleDateString() + " | " +
+        now.toLocaleTimeString();
+}
+
+setInterval(updateDateTime,1000);
+updateDateTime();
+
+// Mood Selection
+function selectMood(card,mood){
+
+currentMood = mood;
+
+document.querySelectorAll(".mood").forEach(item=>{
+item.classList.remove("active");
+});
+
+card.classList.add("active");
+
+document.getElementById("selectedMood").innerHTML = mood;
+
+let text="";
+
+switch(mood){
+
+case "😊 Happy":
+text="Keep smiling! Today is a beautiful day.";
+break;
+
+case "😌 Calm":
+text="Stay peaceful and enjoy your calm mind.";
+break;
+
+case "😍 Excited":
+text="Your energy is amazing. Use it wisely.";
+break;
+
+case "😎 Confident":
+text="Believe in yourself. You can achieve anything.";
+break;
+
+case "😴 Tired":
+text="Take a short break and relax with Nature Sounds.";
+break;
+
+case "😔 Sad":
+text="Write your feelings in the Journal. Better days are coming.";
+break;
+
+case "😫 Stressed":
+text="Try Breathing Exercise and listen to relaxing music.";
+break;
+
+case "😡 Angry":
+text="Take deep breaths and stay away from negativity.";
+break;
+
+}
+
+document.getElementById("aiText").innerHTML=text;
+
+}
+
+// Save Mood
+function saveMood(){
+
+if(currentMood==""){
+
+alert("Please select your mood first.");
+return;
+
+}
+
+localStorage.setItem("mindfreshMood",currentMood);
+
+const btn = document.querySelector(".saveBtn");
+
+btn.innerHTML = "✅ Mood Saved";
+
+setTimeout(function(){
+btn.innerHTML = "💾 Save Mood";
+},2000);
+
+}
+
+// Load Saved Mood
+window.onload=function(){
+
+const savedMood=localStorage.getItem("mindfreshMood");
+
+if(savedMood){
+
+currentMood=savedMood;
+
+document.getElementById("selectedMood").innerHTML=savedMood;
+
+document.getElementById("aiText").innerHTML=
+"Welcome back! Your last saved mood was "+savedMood;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

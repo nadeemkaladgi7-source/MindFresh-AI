@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindFresh AI - Brain Quiz</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* Animated Background Particles */
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .shape {
+            position: absolute;
+            filter: blur(50px);
+            opacity: 0.6;
+            animation: float 10s infinite alternate;
+        }
+        .shape1 { background: #00f2fe; width: 300px; height: 300px; border-radius: 50%; top: -100px; left: -100px; }
+        .shape2 { background: #4facfe; width: 400px; height: 400px; border-radius: 50%; bottom: -150px; right: -100px; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.2); }
+        }
+
+        /* Glassmorphism Quiz Container */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Header & Branding */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 15px;
+        }
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: -webkit-linear-gradient(#00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 2px 10px rgba(0, 242, 254, 0.3);
+        }
+        
+        .score-board {
+            font-weight: 600;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        /* Timer UI */
+        .timer-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            transition: width 1s linear;
+        }
+        .time-text {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #00f2fe;
+        }
+
+        /* Lifelines */
+        .lifelines {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .lifeline-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .lifeline-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .lifeline-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        .hint-box {
+            background: rgba(255, 223, 0, 0.2);
+            border-left: 4px solid gold;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .option:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .option.correct {
+            background: rgba(46, 213, 115, 0.3);
+            border-color: #2ed573;
+            box-shadow: 0 0 15px rgba(46, 213, 115, 0.4);
+        }
+        .option.wrong {
+            background: rgba(255, 71, 87, 0.3);
+            border-color: #ff4757;
+            animation: shake 0.4s;
+        }
+        
+        /* Result Screen */
+        .result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .trophy {
+            font-size: 4rem;
+            color: #ffd32a;
+            margin-bottom: 20px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .play-btn {
+            margin-top: 30px;
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.4);
+        }
+
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media(max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .quiz-container { padding: 20px; }
+            .header { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <div class="quiz-container" id="main-container">
+        <!-- Quiz Section -->
+        <div id="quiz-screen">
+            <div class="header">
+                <div class="brand"><i class="fa-solid fa-brain"></i> MindFresh AI</div>
+                <div class="score-board">Score: <span id="score-text">0</span></div>
+            </div>
+
+            <div class="time-text">Time Left: <span id="time-left">15</span>s</div>
+            <div class="timer-container">
+                <div class="timer-bar" id="timer-bar"></div>
+            </div>
+
+            <div class="lifelines">
+                <button class="lifeline-btn" id="btn-5050" onclick="use5050()"><i class="fa-solid fa-star-half-stroke"></i> 50:50</button>
+                <button class="lifeline-btn" id="btn-hint" onclick="useHint()"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+            </div>
+
+            <div class="hint-box" id="hint-box"></div>
+
+            <h2 class="question" id="question-text">Loading question...</h2>
+
+            <div class="options-grid" id="options-grid">
+                <!-- Options will be injected here via JS -->
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div class="result-screen" id="result-screen">
+            <i class="fa-solid fa-trophy trophy"></i>
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">Quiz Completed!</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 20px; color: #ccc;">Your MindFresh Score: <span id="final-score" style="color: #00f2fe; font-weight: bold; font-size: 1.5rem;">0</span></p>
+            <p id="feedback-msg" style="font-style: italic;"></p>
+            <button class="play-btn" onclick="restartQuiz()"><i class="fa-solid fa-rotate-right"></i> Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Question Database (Fun, Logic & Tech mixed for refreshing mind)
+        const quizData = [
+            {
+                question: "Which of the following is not a programming language?",
+                options: ["Python", "HTML", "Java", "C++"],
+                correct: 1, // Index of correct option (HTML)
+                hint: "It is a markup language, not a programming language used for logic."
+            },
+            {
+                question: "I speak without a mouth and hear without ears. What am I?",
+                options: ["An Echo", "A Shadow", "The Wind", "A Dream"],
+                correct: 0,
+                hint: "You hear me when you shout in an empty cave."
+            },
+            {
+                question: "What is the primary function of a CPU?",
+                options: ["Store Data", "Display Graphics", "Process Instructions", "Connect to Internet"],
+                correct: 2,
+                hint: "It is considered the 'brain' of the computer."
+            },
+            {
+                question: "What has keys but can't open locks?",
+                options: ["A Map", "A Piano", "A Treasure", "A Door"],
+                correct: 1,
+                hint: "It makes beautiful music."
+            },
+            {
+                question: "In Python, which keyword is used to define a function?",
+                options: ["func", "def", "define", "function"],
+                correct: 1,
+                hint: "It is a 3-letter word starting with 'd'."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 15;
+        let timerInterval;
+        let isAnswered = false;
+
+        // DOM Elements
+        const questionText = document.getElementById('question-text');
+        const optionsGrid = document.getElementById('options-grid');
+        const scoreText = document.getElementById('score-text');
+        const timeLeftText = document.getElementById('time-left');
+        const timerBar = document.getElementById('timer-bar');
+        const hintBox = document.getElementById('hint-box');
+        const btn5050 = document.getElementById('btn-5050');
+        const btnHint = document.getElementById('btn-hint');
+        
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const finalScoreText = document.getElementById('final-score');
+        const feedbackMsg = document.getElementById('feedback-msg');
+
+        // Initialize Game
+        function loadQuestion() {
+            clearInterval(timerInterval);
+            isAnswered = false;
+            hintBox.style.display = "none";
+            
+            const currentQ = quizData[currentQuestionIndex];
+            questionText.innerText = currentQ.question;
+            optionsGrid.innerHTML = '';
+
+            // Generate Options
+            currentQ.options.forEach((opt, index) => {
+                const button = document.createElement('div');
+                button.classList.add('option');
+                button.innerText = opt;
+                button.onclick = () => checkAnswer(index, button);
+                button.dataset.index = index;
+                optionsGrid.appendChild(button);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            timeLeft = 15;
+            timeLeftText.innerText = timeLeft;
+            timerBar.style.width = '100%';
+            timerBar.style.transition = 'none'; // Reset animation
+            
+            setTimeout(() => {
+                timerBar.style.transition = 'width 1s linear';
+            }, 50);
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timeLeftText.innerText = timeLeft;
+                timerBar.style.width = `${(timeLeft / 15) * 100}%`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoFail();
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(selectedIndex, buttonElement) {
+            if (isAnswered) return; // Prevent multiple clicks
+            isAnswered = true;
+            clearInterval(timerInterval);
+
+            const correctIndex = quizData[currentQuestionIndex].correct;
+            const allOptions = document.querySelectorAll('.option');
+
+            if (selectedIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score += 10;
+                scoreText.innerText = score;
+            } else {
+                buttonElement.classList.add('wrong');
+                // Highlight the correct one
+                allOptions.forEach(opt => {
+                    if (parseInt(opt.dataset.index) === correctIndex) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+
+            // Move to next question after delay
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < quizData.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1500);
+        }
+
+        function autoFail() {
+            isAnswered = true;
+            const correctIndex = quizData[currentQuestionIndex].correct;
+            const allOptions = document.querySelectorAll('.option');
+            
+            allOptions.forEach(opt => {
+                if (parseInt(opt.dataset.index) === correctIndex) {
+                    opt.classList.add('correct'); // Show correct answer even if time's up
+                }
+            });
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < quizData.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1500);
+        }
+
+        // Lifelines Logic
+        function use5050() {
+            if (isAnswered) return;
+            const correctIndex = quizData[currentQuestionIndex].correct;
+            const allOptions = document.querySelectorAll('.option');
+            let removedCount = 0;
+
+            allOptions.forEach((opt, index) => {
+                if (index !== correctIndex && removedCount < 2) {
+                    opt.style.visibility = 'hidden';
+                    removedCount++;
+                }
+            });
+            btn5050.disabled = true;
+        }
+
+        function useHint() {
+            if (isAnswered) return;
+            hintBox.innerText = `💡 Hint: ${quizData[currentQuestionIndex].hint}`;
+            hintBox.style.display = "block";
+            btnHint.disabled = true;
+        }
+
+        // Result & Restart
+        function showResult() {
+            quizScreen.style.display = 'none';
+            resultScreen.style.display = 'flex';
+            finalScoreText.innerText = score;
+
+            let maxScore = quizData.length * 10;
+            if (score === maxScore) {
+                feedbackMsg.innerText = "Brilliant! Your mind is super fresh! 🚀";
+            } else if (score >= maxScore / 2) {
+                feedbackMsg.innerText = "Good job! You're quite sharp. 👍";
+            } else {
+                feedbackMsg.innerText = "Needs a reboot! Try again to refresh your mind. 🧠";
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            scoreText.innerText = score;
+            btn5050.disabled = false;
+            btnHint.disabled = false;
+            
+            resultScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            
+            loadQuestion();
+        }
+
+        // Start the game initially
+        loadQuestion();
+    </script>
+</body>
+</html>

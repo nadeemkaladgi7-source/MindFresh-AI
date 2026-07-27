@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breathing Exercise - MindFresh AI</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#4facfe,#00f2fe);
+overflow:hidden;
+}
+
+.container{
+text-align:center;
+color:white;
+}
+
+h1{
+font-size:35px;
+margin-bottom:10px;
+}
+
+p{
+font-size:18px;
+margin-bottom:30px;
+}
+
+.circle{
+width:220px;
+height:220px;
+border-radius:50%;
+background:rgba(255,255,255,0.25);
+border:6px solid white;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:auto;
+font-size:28px;
+font-weight:bold;
+transition:4s ease-in-out;
+box-shadow:0 0 40px rgba(255,255,255,.5);
+}
+
+.grow{
+transform:scale(1.4);
+}
+
+.shrink{
+transform:scale(.8);
+}
+
+.timer{
+font-size:40px;
+margin-top:30px;
+font-weight:bold;
+}
+
+.buttons{
+margin-top:30px;
+}
+
+button{
+padding:14px 28px;
+margin:10px;
+border:none;
+border-radius:30px;
+font-size:18px;
+cursor:pointer;
+font-weight:bold;
+transition:.3s;
+}
+
+.start{
+background:#00e676;
+color:white;
+}
+
+.stop{
+background:#ff5252;
+color:white;
+}
+
+button:hover{
+transform:scale(1.08);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🧘 Breathing Exercise</h1>
+
+<p>Relax your mind and breathe slowly.</p>
+
+<div class="circle" id="circle">
+Ready
+</div>
+
+<div class="timer" id="timer">
+4
+</div>
+
+<div class="buttons">
+<button class="start" onclick="startBreathing()">Start</button>
+<button class="stop" onclick="stopBreathing()">Stop</button>
+</div>
+
+</div>
+
+<script>
+
+const circle = document.getElementById("circle");
+const timer = document.getElementById("timer");
+
+let seconds = 4;
+let phase = "Inhale";
+let countdown;
+let breathing;
+
+function updatePhase() {
+
+    if (phase === "Inhale") {
+        circle.innerHTML = "Inhale";
+        circle.classList.add("grow");
+        circle.classList.remove("shrink");
+        phase = "Hold";
+
+    } else if (phase === "Hold") {
+        circle.innerHTML = "Hold";
+        circle.classList.remove("grow");
+        phase = "Exhale";
+
+    } else {
+        circle.innerHTML = "Exhale";
+        circle.classList.add("shrink");
+        phase = "Inhale";
+    }
+
+    seconds = 4;
+    timer.innerHTML = seconds;
+}
+
+function startBreathing() {
+
+    updatePhase();
+
+    breathing = setInterval(updatePhase, 4000);
+
+    countdown = setInterval(() => {
+
+        seconds--;
+        timer.innerHTML = seconds;
+
+        if (seconds <= 0) {
+            seconds = 4;
+        }
+
+    }, 1000);
+
+}
+  function stopBreathing() {
+
+    clearInterval(breathing);
+    clearInterval(countdown);
+
+    circle.innerHTML = "Ready";
+    circle.classList.remove("grow");
+    circle.classList.remove("shrink");
+
+    timer.innerHTML = "4";
+    seconds = 4;
+    phase = "Inhale";
+}
+
+</script>
+
+</body>
+</html>

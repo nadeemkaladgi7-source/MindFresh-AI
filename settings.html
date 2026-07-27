@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindFresh AI - Settings</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+
+    *{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:#fff;
+padding:20px;
+min-height:100vh;
+transition:0.4s;
+}
+
+.container{
+max-width:450px;
+margin:auto;
+}
+
+.header{
+display:flex;
+align-items:center;
+gap:15px;
+margin-bottom:25px;
+}
+
+.header h1{
+font-size:30px;
+font-weight:bold;
+}
+
+.back{
+color:#00e5ff;
+font-size:25px;
+text-decoration:none;
+}
+
+.card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(18px);
+-webkit-backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.15);
+border-radius:25px;
+padding:20px;
+margin-bottom:20px;
+box-shadow:0 8px 25px rgba(0,0,0,.35);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-4px);
+}
+
+.card h2{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:20px;
+color:#00e5ff;
+font-size:24px;
+}
+
+.card h3{
+margin:18px 0 12px;
+font-size:18px;
+}
+
+input[type=text]{
+width:100%;
+padding:14px;
+border:none;
+outline:none;
+border-radius:12px;
+background:rgba(255,255,255,.12);
+color:white;
+font-size:16px;
+}
+
+input::placeholder{
+color:#d8d8d8;
+}
+
+.setting{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin:18px 0;
+font-size:18px;
+}
+
+.switch{
+position:relative;
+display:inline-block;
+width:58px;
+height:30px;
+}
+
+.switch input{
+display:none;
+}
+
+.slider{
+position:absolute;
+cursor:pointer;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:#555;
+border-radius:30px;
+transition:.4s;
+}
+
+.slider:before{
+content:"";
+position:absolute;
+height:22px;
+width:22px;
+left:4px;
+bottom:4px;
+background:white;
+border-radius:50%;
+transition:.4s;
+}
+
+input:checked+.slider{
+background:#00e5ff;
+}
+
+input:checked+.slider:before{
+transform:translateX(28px);
+}
+
+.colors{
+display:flex;
+gap:15px;
+margin-top:10px;
+}
+
+.colors button{
+width:45px;
+height:45px;
+border:none;
+border-radius:50%;
+cursor:pointer;
+transition:.3s;
+}
+
+.colors button:hover{
+transform:scale(1.15);
+}
+
+.blue{
+background:#00bfff;
+}
+
+.purple{
+background:#8a2be2;
+}
+
+.green{
+background:#00c853;
+}
+
+input[type=range]{
+width:100%;
+margin-top:15px;
+accent-color:#00e5ff;
+}
+
+.danger{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:none;
+border-radius:15px;
+background:#ff4d4d;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:.3s;
+}
+
+.danger:hover{
+background:#ff2222;
+}
+
+ul{
+margin-top:10px;
+padding-left:20px;
+line-height:28px;
+}
+
+.saveBtn{
+width:100%;
+padding:16px;
+border:none;
+border-radius:18px;
+background:#00e5ff;
+color:#003344;
+font-size:19px;
+font-weight:bold;
+cursor:pointer;
+margin-top:15px;
+transition:.3s;
+box-shadow:0 0 20px rgba(0,229,255,.4);
+}
+
+.saveBtn:hover{
+transform:scale(1.03);
+box-shadow:0 0 35px rgba(0,229,255,.7);
+}
+#savedMsg{
+text-align:center;
+color:#00ff99;
+font-size:18px;
+font-weight:bold;
+margin-top:15px;
+}
+body.dark{
+background:#0b1120;
+}
+
+body.dark .card{
+background:rgba(20,30,50,.9);
+border:1px solid rgba(255,255,255,.15);
+}
+
+body.dark input[type=text]{
+background:#1b2a41;
+color:white;
+}
+
+
+
+    </style>
+</head>
+
+<body>
+
+   <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <a href="index.html" class="back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+
+        <h1>
+            <i class="fas fa-cog"></i>
+            Settings
+        </h1>
+    </div>
+
+    <!-- Profile -->
+    <div class="card">
+
+        <h2><i class="fas fa-user"></i> Profile</h2>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Enter Your Name">
+
+    </div>
+
+    <!-- Appearance -->
+    <div class="card">
+
+        <h2><i class="fas fa-palette"></i> Appearance</h2>
+
+        <div class="setting">
+            <span>Dark Mode</span>
+
+            <label class="switch">
+                <input type="checkbox" id="darkMode">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <h3>Theme Color</h3>
+
+        <div class="colors">
+            <button class="blue" type="button"></button>
+            <button class="purple" type="button"></button>
+            <button class="green" type="button"></button>
+        </div>
+
+    </div>
+
+    <!-- Sound -->
+    <div class="card">
+
+        <h2><i class="fas fa-volume-up"></i> Sound</h2>
+
+        <div class="setting">
+            <span>App Sound</span>
+
+            <label class="switch">
+                <input type="checkbox" id="soundToggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <input
+            type="range"
+            id="volume"
+            min="0"
+            max="100"
+            value="70">
+
+    </div>
+
+    <!-- Notifications -->
+    <div class="card">
+
+        <h2><i class="fas fa-bell"></i> Notifications</h2>
+
+        <div class="setting">
+            <span>Daily Reminder</span>
+
+            <label class="switch">
+                <input type="checkbox" id="notify">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+    </div>
+
+    <!-- Privacy -->
+    <div class="card">
+
+        <h2><i class="fas fa-lock"></i> Privacy</h2>
+
+        <button class="danger" id="clearMood">
+            Clear Mood History
+        </button>
+
+        <button class="danger" id="clearJournal">
+            Clear Journal
+        </button>
+
+    </div>
+
+    <!-- About -->
+    <div class="card">
+
+        <h2><i class="fas fa-info-circle"></i> About</h2>
+
+        <p><strong>MindFresh AI v1.0</strong></p>
+
+        <p>Developed By</p>
+
+        <ul>
+            <li>Nadeem</li>
+            <li>Mehzabeen</li>
+            <li>Nagraj</li>
+            <li>Anisa</li>
+        </ul>
+
+    </div>
+
+    <button class="saveBtn">
+        Save Settings
+    </button>
+<p id="savedMsg"></p>
+</div>
+
+
+
+    <script>
+
+    const username = document.getElementById("username");
+const darkMode = document.getElementById("darkMode");
+const saveBtn = document.querySelector(".saveBtn");
+
+// Load saved settings
+window.onload = function () {
+
+    // Username
+    if (localStorage.getItem("username")) {
+        username.value = localStorage.getItem("username");
+    }
+
+    // Dark Mode
+    if (localStorage.getItem("darkMode") === "true") {
+        darkMode.checked = true;
+        document.body.classList.add("dark");
+    }
+
+    // Theme
+    let theme = localStorage.getItem("theme");
+    if (theme) {
+        document.body.style.background = theme;
+    }
+
+};
+
+// Save Button
+saveBtn.onclick = function () {
+
+    localStorage.setItem("username", username.value);
+    localStorage.setItem("darkMode", darkMode.checked);
+
+    document.getElementById("savedMsg").innerHTML = "✅ Settings Saved Successfully";
+
+setTimeout(function(){
+    document.getElementById("savedMsg").innerHTML = "";
+},3000);
+
+};
+
+// Dark Mode
+darkMode.addEventListener("change", function () {
+
+    if (this.checked) {
+        document.body.classList.add("dark");
+        localStorage.setItem("darkMode", "true");
+    } else {
+        document.body.classList.remove("dark");
+        localStorage.setItem("darkMode", "false");
+    }
+
+});
+
+// Theme Colors
+document.querySelector(".blue").onclick = function () {
+
+    let c = "linear-gradient(135deg,#0f2027,#203a43,#2c5364)";
+    document.body.style.background = c;
+    localStorage.setItem("theme", c);
+
+};
+
+document.querySelector(".purple").onclick = function () {
+
+    let c = "linear-gradient(135deg,#41295a,#2F0743)";
+    document.body.style.background = c;
+    localStorage.setItem("theme", c);
+
+};
+
+document.querySelector(".green").onclick = function () {
+
+    let c = "linear-gradient(135deg,#134E5E,#71B280)";
+    document.body.style.background = c;
+    localStorage.setItem("theme", c);
+
+};
+
+// Clear Mood History
+document.getElementById("clearMood").onclick = function () {
+
+    localStorage.removeItem("moodHistory");
+    alert("Mood History Cleared 🗑️");
+
+};
+
+// Clear Journal
+document.getElementById("clearJournal").onclick = function () {
+
+    localStorage.removeItem("journal");
+    alert("Journal Cleared 🗑️");
+
+};
+
+
+
+    </script>
+
+</body>
+</html>

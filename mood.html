@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindFresh AI</title>
+
+   <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f172a,#1e3a8a,#312e81);
+color:white;
+padding:20px;
+}
+
+.hero{
+text-align:center;
+margin-bottom:40px;
+}
+
+.hero h1{
+font-size:42px;
+margin-bottom:10px;
+}
+
+.hero h2{
+font-size:28px;
+margin-bottom:15px;
+color:#38bdf8;
+}
+
+.hero p{
+font-size:18px;
+max-width:700px;
+margin:auto;
+color:#ddd;
+}
+
+.hero-robot{
+font-size:90px;
+margin-top:20px;
+animation:float 3s infinite ease-in-out;
+}
+
+@keyframes float{
+0%{transform:translateY(0);}
+50%{transform:translateY(-15px);}
+100%{transform:translateY(0);}
+}
+
+.mood-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-top:40px;
+}
+
+.mood-card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+border-radius:20px;
+padding:25px;
+text-align:center;
+transition:.4s;
+box-shadow:0 0 20px rgba(0,0,0,.3);
+}
+
+.mood-card:hover{
+transform:translateY(-10px) scale(1.03);
+background:rgba(255,255,255,.15);
+}
+
+.mood-card span{
+font-size:60px;
+display:block;
+margin-bottom:15px;
+}
+
+.mood-card h2{
+margin-bottom:10px;
+}
+
+.mood-card p{
+color:#ddd;
+margin-bottom:20px;
+}
+
+.mood-card button{
+padding:12px 28px;
+border:none;
+border-radius:30px;
+background:#38bdf8;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:.3s;
+}
+
+.mood-card button:hover{
+background:#2563eb;
+}
+
+.ai-result{
+margin-top:60px;
+background:rgba(255,255,255,.08);
+padding:30px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 0 20px rgba(0,0,0,.3);
+}
+
+.ai-result h2{
+margin-bottom:20px;
+color:#38bdf8;
+}
+
+#result{
+font-size:18px;
+line-height:1.7;
+color:white;
+}
+/* =========================
+   Mood Popup
+========================= */
+
+.mood-popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(8px);
+display:none;
+justify-content:center;
+align-items:flex-end;
+z-index:9999;
+animation:fadeIn .3s;
+}
+
+.popup-box{
+width:100%;
+max-width:500px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(25px);
+border:1px solid rgba(255,255,255,.15);
+border-radius:30px 30px 0 0;
+padding:25px;
+animation:slideUp .35s ease;
+}
+
+.popup-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+}
+
+.popup-header h2{
+color:#fff;
+font-size:26px;
+}
+
+.close-popup{
+font-size:28px;
+color:#fff;
+cursor:pointer;
+}
+
+#popupText{
+color:#ddd;
+margin-bottom:20px;
+font-size:15px;
+}
+
+#popupActions{
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.popup-btn{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:16px 20px;
+background:rgba(255,255,255,.10);
+border:1px solid rgba(255,255,255,.15);
+border-radius:18px;
+color:#fff;
+font-size:17px;
+cursor:pointer;
+transition:.3s;
+}
+
+.popup-btn:hover{
+background:linear-gradient(135deg,#6C63FF,#00C9FF);
+transform:translateY(-3px);
+}
+
+@keyframes slideUp{
+from{
+transform:translateY(100%);
+}
+to{
+transform:translateY(0);
+}
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+}
+to{
+opacity:1;
+}
+}
+</style>
+</head>
+
+
+<body>
+
+<header class="hero">
+
+<div class="hero-text">
+
+<h1>🤖 MindFresh AI</h1>
+
+<h2>How Are You Feeling Today?</h2>
+
+<p>
+Select your current mood and let AI guide you with personalized activities, relaxing music and wellness tips.
+</p>
+
+</div>
+
+<div class="hero-robot">
+
+🤖
+
+</div>
+
+</header>
+
+<section class="mood-grid">
+
+<div class="mood-card happy">
+    <span>😊</span>
+    <h2>Happy</h2>
+    <p>Feeling energetic and joyful</p>
+    <button onclick="openMood('happy')">Choose</button>
+</div>
+
+<div class="mood-card sad">
+    <span>😔</span>
+    <h2>Sad</h2>
+    <p>Need comfort and motivation</p>
+    <button onclick="openMood('sad')">Choose</button>
+</div>
+
+<div class="mood-card stressed">
+    <span>😰</span>
+    <h2>Stressed</h2>
+    <p>Relax your mind instantly</p>
+    <button onclick="openMood('stressed')">Choose</button>
+</div>
+
+<div class="mood-card angry">
+    <span>😡</span>
+    <h2>Angry</h2>
+    <p>Calm yourself peacefully</p>
+    <button onclick="openMood('angry')">Choose</button>
+</div>
+
+<div class="mood-card tired">
+    <span>😴</span>
+    <h2>Tired</h2>
+    <p>Recharge your energy</p>
+    <button onclick="openMood('tired')">Choose</button>
+</div>
+
+    <div class="mood-card relaxed">
+    <span>😌</span>
+    <h2>Relaxed</h2>
+    <p>Maintain your peaceful mood</p>
+    <button onclick="openMood('relaxed')">Choose</button>
+</div>
+
+<div class="mood-card excited">
+    <span>🤩</span>
+    <h2>Excited</h2>
+    <p>Celebrate your happiness</p>
+    <button onclick="openMood('excited')">Choose</button>
+</div>
+
+<div class="mood-card lonely">
+    <span>🥺</span>
+    <h2>Lonely</h2>
+    <p>Let's make you feel better</p>
+    <button onclick="openMood('lonely')">Choose</button>
+</div>
+
+</section>
+
+<section class="ai-result">
+
+<h2>🤖 AI Mood Assistant</h2>
+
+<div id="result">
+
+Choose your mood to receive personalized suggestions.
+
+</div>
+
+</section>
+
+<script>
+function closeMoodPopup() {
+    document.getElementById("moodPopup").style.display = "none";
+}
+
+function openMood(mood) {
+
+    const popup = document.getElementById("moodPopup");
+    const title = document.getElementById("popupTitle");
+    const text = document.getElementById("popupText");
+    const actions = document.getElementById("popupActions");
+    const result = document.getElementById("result");
+
+    popup.style.display = "flex";
+
+    let music = "🎵 Music";
+
+    switch(mood){
+
+        case "happy":
+            title.innerHTML="😊 Happy";
+            text.innerHTML="Great! Keep enjoying your positive mood.";
+            result.innerHTML="<h3>😊 You are Happy!</h3><p>Keep smiling.</p>";
+            music="🎵 Happy Music";
+            break;
+
+        case "sad":
+            title.innerHTML="😔 Sad";
+            text.innerHTML="Don't worry. Better days are coming.";
+            result.innerHTML="<h3>😔 You are Sad</h3><p>Stay positive.</p>";
+            music="🎵 Calm Music";
+            break;
+
+        case "stressed":
+            title.innerHTML="😰 Stressed";
+            text.innerHTML="Take a deep breath and relax.";
+            result.innerHTML="<h3>😰 You are Stressed</h3><p>Try breathing exercises.</p>";
+            music="🎵 Relax Music";
+            break;
+
+        case "angry":
+            title.innerHTML="😡 Angry";
+            text.innerHTML="Stay calm and control your emotions.";
+            result.innerHTML="<h3>😡 You are Angry</h3><p>Listen to peaceful music.</p>";
+            music="🎵 Peace Music";
+            break;
+
+        case "tired":
+            title.innerHTML="😴 Tired";
+            text.innerHTML="Take some rest and recharge.";
+            result.innerHTML="<h3>😴 You are Tired</h3>";
+            music="🎵 Sleep Music";
+            break;
+
+        case "relaxed":
+            title.innerHTML="😌 Relaxed";
+            text.innerHTML="Enjoy your peaceful mood.";
+            result.innerHTML="<h3>😌 You are Relaxed</h3>";
+            music="🎵 Nature Sounds";
+            break;
+
+        case "excited":
+            title.innerHTML="🤩 Excited";
+            text.innerHTML="Awesome! Enjoy your excitement.";
+            result.innerHTML="<h3>🤩 You are Excited</h3>";
+            music="🎵 Party Music";
+            break;
+
+        case "lonely":
+            title.innerHTML="🥺 Lonely";
+            text.innerHTML="You are not alone.";
+            result.innerHTML="<h3>🥺 You are Lonely</h3>";
+            music="🎵 Comfort Music";
+            break;
+    }
+
+    actions.innerHTML = `
+        <div class="popup-btn" onclick="location.href='nature.html'">${music}</div>
+
+        <div class="popup-btn" onclick="location.href='games.html'">🎮 Mini Games</div>
+
+        <div class="popup-btn" onclick="location.href='quotes.html'">💬 Motivation</div>
+
+        <div class="popup-btn" onclick="location.href='journal.html'">📝 Journal</div>
+    `;
+}
+</script>
+<!-- Mood Popup -->
+<div id="moodPopup" class="mood-popup">
+
+    <div class="popup-box">
+
+        <div class="popup-header">
+            <h2 id="popupTitle">😊 Happy</h2>
+
+            <span class="close-popup" onclick="closeMoodPopup()">
+                ✖
+            </span>
+        </div>
+
+        <p id="popupText">
+            Choose an activity to improve your mood.
+        </p>
+
+        <div id="popupActions">
+
+            <!-- JavaScript yaha buttons add karega -->
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>
